@@ -32,8 +32,8 @@
 Skill 是「文件夹 + `SKILL.md`」的形式，Agent 启动时扫描技能目录自动加载。
 
 ```bash
-git clone https://github.com/miseon-stack/项目管理skill.git
-cd 项目管理skill
+git clone https://github.com/miseon-stack/project-management-skills.git
+cd project-management-skills
 
 # 装到用户级（所有项目可用）
 cp -R skills/* ~/.workbuddy/skills/
@@ -127,7 +127,7 @@ $EDITOR secrets.local.json
 ## 六、目录结构
 
 ```
-项目管理skill/
+project-management-skills/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
