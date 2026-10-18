@@ -1,0 +1,225 @@
+{
+  "_comment": "项目 × 数据源登记册。2026-09-17 实查。新增项目照抄一份结构即可；字段名必须与线上 +field-list 逐字一致。",
+  "_tracked": "只跟踪本人主责的 3 个项目；客户D / 其他客户非主责，不要主动扫。",
+  "scratch_dir": "<WORKSPACE>/path",
+  "people_index": "<WORKSPACE>/path",
+  "projects": {
+    "客户B": {
+      "label": "客户B · AI 智能客服",
+      "base_token": "<TOKEN>",
+      "table_id": "<TOKEN>",
+      "stage_table_id": "<TOKEN>",
+      "url": "https://example.feishu.cn/wiki/<WIKI_TOKEN>?table=<TABLE_ID>&view=<VIEW_ID>",
+      "visibility": "client",
+      "fields": {
+        "id": "任务编号",
+        "title": "任务标题",
+        "status": "状态",
+        "due": "计划完成",
+        "start": "计划开始",
+        "progress": "最新进展",
+        "updated": "最后更新时间",
+        "owner": "负责人",
+        "collab": "协助人",
+        "parent": "父记录",
+        "deliverable": "附件",
+        "stage": "所属项目阶段",
+        "module": "任务模块",
+        "theme": "业务主题",
+        "priority": "优先级",
+        "note": "备注",
+        "feishu_task": "飞书方任务",
+        "client_task": "客户B方任务"
+      },
+      "done_values": [
+        "已完成",
+        "完成"
+      ],
+      "blocked_values": [
+        "阻塞",
+        "待确认"
+      ],
+      "_field_id_note": "基线 2026-09-23 09:20（第二次对齐，改名非异常）：人员字段「负责人 (人员 )」已改名为「负责人」，field_id 不变 <FIELD_ID>（旧配置名对不上会导致 schema_drift + 负责人全空）。全部 18 个字段已登记进 field_ids，不再报 schema_new_fields。前一版基线 2026-09-17 14:20（负责人主动调整，非异常）。主字段=「任务标题」（文本 <FIELD_ID>，打开即见标题）；「任务编号」= 新建 AutoNumber <FIELD_ID>；「协助人」<FIELD_ID>。旧编号 T64–T110 已失效，映射见 <WORKSPACE>/客户B-AI客服/项目资料/任务编号映射_20260917.md。引用线上记录优先用标题或 record_id，少用自动编号（会被重建）。",
+      "field_ids": {
+        "任务编号": "<FIELD_ID>",
+        "任务标题": "<FIELD_ID>",
+        "状态": "<FIELD_ID>",
+        "计划完成": "<FIELD_ID>",
+        "计划开始": "<FIELD_ID>",
+        "最新进展": "<FIELD_ID>",
+        "最后更新时间": "<FIELD_ID>",
+        "所属项目阶段": "<FIELD_ID>",
+        "负责人": "<FIELD_ID>",
+        "协助人": "<FIELD_ID>",
+        "父记录": "<FIELD_ID>",
+        "附件": "<FIELD_ID>",
+        "任务模块": "<FIELD_ID>",
+        "业务主题": "<FIELD_ID>",
+        "优先级": "<FIELD_ID>",
+        "备注": "<FIELD_ID>",
+        "飞书方任务": "<FIELD_ID>",
+        "客户B方任务": "<FIELD_ID>"
+      },
+      "chats": {
+        "【服务群】客户BAI智能客服沟通群": "<CHAT_ID>",
+        "（内部）客户B项目": "<CHAT_ID>",
+        "【内】客户B打单群": "<CHAT_ID>",
+        "【飞书服务】客户B管理员对接群": "<CHAT_ID>"
+      },
+      "search_keywords": [
+        "客户B",
+        "Udesk",
+        "小灰"
+      ],
+      "_webhook_note": "webhook 是凭据，不入库。实际值放 references/secrets.local.json（已在 .gitignore 排除），或设环境变量 SENTINEL_WEBHOOK_<项目名>，或用 --url 临时覆盖。取值优先级：--url > 环境变量 > secrets.local.json。开了签名校验则填 webhook_secret。推送默认 dry-run，必须显式 --send。",
+      "webhook": null,
+      "webhook_secret": null,
+      "webhook_label": "客户B项目群（凭据已外置到 references/secrets.local.json，本文件不入库）"
+    },
+    "客户A": {
+      "label": "客户A · 钉钉迁移飞书",
+      "base_token": "<TOKEN>",
+      "table_id": "<TOKEN>",
+      "stage_table_id": "<TOKEN>",
+      "url": "https://example.feishu.cn/base/<BASE_TOKEN>?table=<TABLE_ID>&view=<VIEW_ID>",
+      "visibility": "client",
+      "fields": {
+        "id": "任务编号",
+        "title": "飞书方任务",
+        "status": "状态",
+        "due": "计划完成",
+        "start": "计划开始",
+        "progress": "最新进展",
+        "updated": null,
+        "owner": "飞书方负责人",
+        "client_owner": "客户A方负责人",
+        "client_title": "客户A方任务",
+        "collab": "协作方",
+        "deliverable": "交付物/产出",
+        "stage": "所属项目阶段",
+        "module": "任务模块",
+        "theme": "业务主题",
+        "priority": "优先级",
+        "parent": "父记录",
+        "note": "备注说明",
+        "attachment": "相关附件",
+        "chat": "沟通群"
+      },
+      "_fields_note": "19 个字段全部登记（2026-09-17 实读），否则 schema_check 会把模板自带字段全报成「未登记字段」P2 噪声。注：「相关附件」<FIELD_ID> 是 attachment 类型；「交付物/产出」<FIELD_ID> 是 text（三表同 id，贴云文档链接）。",
+      "done_values": [
+        "已完成",
+        "完成"
+      ],
+      "blocked_values": [
+        "阻塞",
+        "待确认"
+      ],
+      "field_ids": {
+        "任务编号": "<FIELD_ID>",
+        "飞书方任务": "<FIELD_ID>",
+        "状态": "<FIELD_ID>",
+        "计划完成": "<FIELD_ID>",
+        "最新进展": "<FIELD_ID>",
+        "所属项目阶段": "<FIELD_ID>",
+        "交付物/产出": "<FIELD_ID>",
+        "相关附件": "<FIELD_ID>",
+        "飞书方负责人": "<FIELD_ID>",
+        "客户A方负责人": "<FIELD_ID>"
+      },
+      "chats": {
+        "【服务群】客户A": "<CHAT_ID>",
+        "【内部】客户A项目沟通群": "<CHAT_ID>",
+        "客户A&飞书 信息化侧沟通群": "<CHAT_ID>",
+        "客户A集成迁移专项": "<CHAT_ID>",
+        "客户A研发需求demo": "<CHAT_ID>",
+        "CRM、ERP与飞书场景集成沟通": "<CHAT_ID>",
+        "项目-飞书导入": "<CHAT_ID>",
+        "飞书会议整合": "<CHAT_ID>",
+        "【内】客户A打单群": "<CHAT_ID>"
+      },
+      "search_keywords": [
+        "客户A",
+        "客户A",
+        "流片",
+        "Meego",
+        "周报"
+      ],
+      "webhook": null,
+      "webhook_secret": null,
+      "webhook_label": "未绑定（待用户提供机器人 webhook）",
+      "report_url": "https://example.feishu.cn/file/<FILE_TOKEN>",
+      "_report_url_note": "「查看完整巡检」按钮目标。同名文件「巡检报告-客户A-最新.md」在云空间根目录，每天巡检后用 lark-cli markdown +overwrite --file-token <TOKEN> 覆盖更新，链接保持稳定。",
+      "_webhook_note": "webhook 是凭据，不入库。实际值放 references/secrets.local.json（已在 .gitignore 排除），或设环境变量 SENTINEL_WEBHOOK_<项目名>，或用 --url 临时覆盖。取值优先级：--url > 环境变量 > secrets.local.json。开了签名校验则填 webhook_secret。推送默认 dry-run，必须显式 --send。"
+    },
+    "客户C": {
+      "label": "客户C · 上线与验收",
+      "base_token": "<TOKEN>",
+      "table_id": "<TOKEN>",
+      "stage_table_id": "<TOKEN>",
+      "url": "https://example.feishu.cn/base/<BASE_TOKEN>?table=<TABLE_ID>&view=<VIEW_ID>",
+      "visibility": "client",
+      "fields": {
+        "id": "编号",
+        "title": "任务名称",
+        "status": "状态",
+        "due": "计划完成",
+        "progress": "最新进展",
+        "updated": null,
+        "owner": "负责人",
+        "deliverable": "交付",
+        "stage": "所属项目阶段",
+        "module": "任务模块",
+        "theme": "业务主题",
+        "plan_start": "计划开始",
+        "parent": "父记录",
+        "client_task": "客户C方任务",
+        "priority": "优先级",
+        "note": "备注说明",
+        "collab": "协作人",
+        "feishu_task": "飞书方任务",
+        "collab_users": "协作"
+      },
+      "done_values": [
+        "已完成",
+        "完成"
+      ],
+      "blocked_values": [
+        "阻塞",
+        "待确认"
+      ],
+      "field_ids": {
+        "任务编号": "<FIELD_ID>",
+        "飞书方任务": "<FIELD_ID>",
+        "状态": "<FIELD_ID>",
+        "计划完成": "<FIELD_ID>",
+        "最新进展": "<FIELD_ID>",
+        "所属项目阶段": "<FIELD_ID>",
+        "交付": "<FIELD_ID>",
+        "协作": "<FIELD_ID>"
+      },
+      "chats": {
+        "【服务群】客户C": "<CHAT_ID>",
+        "【服务群】客户C发票流程讨论组": "<CHAT_ID>",
+        "【服务群】客户C&飞书办公软件沟通群": "<CHAT_ID>",
+        "【内】客户C打单群": "<CHAT_ID>"
+      },
+      "search_keywords": [
+        "客户C",
+        "发票",
+        "出货单"
+      ],
+      "webhook": null,
+      "webhook_secret": null,
+      "webhook_label": "未绑定（待用户提供机器人 webhook）",
+      "_webhook_note": "webhook 是凭据，不入库。实际值放 references/secrets.local.json（已在 .gitignore 排除），或设环境变量 SENTINEL_WEBHOOK_<项目名>，或用 --url 临时覆盖。取值优先级：--url > 环境变量 > secrets.local.json。开了签名校验则填 webhook_secret。推送默认 dry-run，必须显式 --send。"
+    }
+  },
+  "sender_aliases": {
+    "_note": "跨租户成员在通讯录里查不到（contact +search-user 返回空），只能在此登记别名；优先级高于 people_index / people.local.json。客户A方人员已从实施表「客户A方负责人」字段反向确认，见 people.local.json。",
+    "<OPEN_ID>": "汤忠冬（客户B方）",
+    "<OPEN_ID>": "同事（客户A方）",
+    "<OPEN_ID>": "客户B方成员·未建档",
+    "<OPEN_ID>": "客户B方成员·未建档",
+    "<APP_ID>": "应用/机器人"
+  }
+}
