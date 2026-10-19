@@ -4,11 +4,11 @@
 用法:
   python3 submit_daily.py --file 日报/2026-09-10_本人日报.md --date 2026-09-10 --time 22:00 [--dry-run]
 
-草稿格式约定（与 SKILL.md 一致）:
-  ## 今日工作总结
-  ...
-  ## 明日工作计划
-  ...
+草稿格式约定（2026-10-19 起为固定三段格式，与 SKILL.md 一致）:
+  ✅ 今日工作总结：   → 一. 今日会议 / 二. 今日事项（各段从 1 独立编号）
+  📖 明日工作计划：   → 明日计划条目
+  ⚠️ 遇到的问题：    → 恒留空
+  兼容旧的 '## 今日工作总结' / '## 明日工作计划' 二级标题锚点。
 
 依赖: 本机已安装并登录 lark-cli（--as user）。
 """
@@ -26,30 +26,33 @@ FIELD_TOMORROW = "明日工作计划"
 FIELD_DATE = "日报提交日期"
 
 
-def parse_sections(md_text):
-    """按 '## ' 二级标题切分，返回 {标题: 正文}。"""
-    sections = {}
-    cur = None
-    buf = []
-    for line in md_text.splitlines():
-        m = re.match(r"^##\s+(.+?)\s*$", line)
-        if m:
-            if cur is not None:
-                sections[cur] = "\n".join(buf).strip()
-            cur = m.group(1).strip()
-            buf = []
-        elif cur is not None:
-            buf.append(line)
-    if cur is not None:
-        sections[cur] = "\n".join(buf).strip()
-    return sections
+def parse_fields(md_text):
+    """切出「今日工作总结 / 明日工作计划」两个字段的正文。
 
+    新格式（2026-10-19 固定）：按 ✅ 今日工作总结 / 📖 明日工作计划 / ⚠️ 遇到的问题
+    三个卡片标记切；兼容旧的 '## 今日工作总结' / '## 明日工作计划' 二级标题。
+    字段值剥掉标记行与多余空行；起草说明（blockquote / ── 分隔线）不进字段。
+    """
+    t = re.sub(r"(?m)^>.*$", "", md_text)          # 去掉说明性 blockquote
+    t = re.sub(r"(?m)^─{6,}.*$", "", t)            # 去掉起草稿的分隔线
 
-def pick(sections, keyword):
-    for k, v in sections.items():
-        if keyword in k:
-            return v
-    return ""
+    def segment(start_pat, end_pats):
+        m = re.search(start_pat, t, flags=re.M)
+        if not m:
+            return ""
+        seg = t[m.end():]
+        for p in end_pats:
+            mm = re.search(p, seg, flags=re.M)
+            if mm:
+                seg = seg[: mm.start()]
+        lines = [ln for ln in seg.splitlines() if not re.match(r"^\s*[✅📖⚠️]", ln)]
+        return re.sub(r"\n{3,}", "\n\n", "\n".join(lines)).strip()
+
+    today = segment(r"^[^\n]*今日工作总结[^\n]*$",
+                    [r"^[^\n]*明日工作计划[^\n]*$", r"^[^\n]*遇到的问题[^\n]*$"])
+    tomorrow = segment(r"^[^\n]*明日工作计划[^\n]*$",
+                       [r"^[^\n]*遇到的问题[^\n]*$"])
+    return today, tomorrow
 
 
 def main():
@@ -63,14 +66,12 @@ def main():
     args = ap.parse_args()
 
     with open(args.file, encoding="utf-8") as f:
-        sections = parse_sections(f.read())
+        today, tomorrow = parse_fields(f.read())
 
-    today = pick(sections, "今日工作总结")
-    tomorrow = pick(sections, "明日工作计划")
     if not today:
-        sys.exit("ERROR: 草稿里没找到 '## 今日工作总结' 段落")
+        sys.exit("ERROR: 草稿里没找到「今日工作总结」段落（✅ 今日工作总结： 或 ## 今日工作总结）")
     if not tomorrow:
-        print("WARN: 没找到 '## 明日工作计划' 段落，该列将留空", file=sys.stderr)
+        print("WARN: 没找到「明日工作计划」段落，该列将留空", file=sys.stderr)
 
     payload = {
         "create_records": [
